@@ -48,6 +48,8 @@
             this.lastBlock = 0;
             // Y Position of the last block and starting position of bird
             this.lastY = 300;
+			// Background initial speed
+			this.backgroundInitSpeed = 400;
         },
 
         createBird: function () {
@@ -84,7 +86,7 @@
                 bottomBlock.body.immovable = true;
             }
 
-            this.blockGroup.setAll('body.velocity.x', -200);
+            //this.blockGroup.setAll('body.velocity.x', -this.getCurrentBackgroundSpeed());
         },
 
         update: function () {
@@ -103,7 +105,7 @@
             if (this.bird.y > 875) {
                 this.gameOver();
             }
-        },
+		},
 
         flap: function () {
             // Setting velocity.y makes you go up
@@ -116,7 +118,8 @@
             var newY = 0;
             var scored = false;
             this.blockGroup.forEach(function (block) {
-
+				block.body.velocity.x = -this.getCurrentBackgroundSpeed();
+				
                 // Check If Scored
                 if (!block.scored && block.x + block.width * 0.5 < this.bird.x - this.bird.width * 0.5) {
                     scored = true;
@@ -161,6 +164,12 @@
             while (this.lastY - y > 200 || this.lastY - y < -200);
             return y;
         },
+
+		getCurrentBackgroundSpeed: function() {
+			var speed = this.backgroundInitSpeed * 1.0 * (this.score / 10.0 + 1);
+			if(speed > 1500) speed = 1500;
+			return speed;
+		},
 
         gameOver: function () {
             this.game.state.states['menu'].score = this.score;
